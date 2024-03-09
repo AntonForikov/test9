@@ -1,9 +1,10 @@
 import {configureStore} from '@reduxjs/toolkit';
-import {dishesReducer} from '../store/transactionSlice';
+import {transactionsReducer} from '../store/transactionSlice';
+
 
 export const store = configureStore({
   reducer: {
-    dishes: dishesReducer,
+    transactions: transactionsReducer,
   }
 });
 

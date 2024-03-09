@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import {addNewTransaction} from '../../store/transactionThunk';
+import {useAppDispatch} from '../../app/hooks';
 
 interface Props {
   show: boolean
@@ -13,16 +15,25 @@ const initialTransaction = {
   category: '',
   amount: 0,
   date: ''
-}
+};
 const AddEditModal: React.FC<Props> = ({handleClose, show, edit=false}) => {
+  const dispatch = useAppDispatch();
   const [transaction, setTransaction] = useState(initialTransaction);
 
   const change = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const {name, value} = e.target;
     setTransaction((prevState) => ({
       ...prevState,
-      [name]: value
-    }))
+      [name]: value,
+      date: new Date().toISOString()
+    }));
+  };
+
+  const onFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await dispatch(addNewTransaction(transaction));
+    handleClose();
+    setTransaction(initialTransaction);
   };
 
   return (
@@ -32,25 +43,29 @@ const AddEditModal: React.FC<Props> = ({handleClose, show, edit=false}) => {
           <Modal.Title>{edit ? 'Edit Expense/Income' : 'Add Expense/Income'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <form>
+          <form onSubmit={onFormSubmit}>
             <label htmlFor='type'>Type</label>
             <select
-              className='form-control mt-2'
-              name='type'
-              id='type'
+              className="form-control mt-2"
+              name="type"
+              id="type"
               onChange={change}
+              required
             >
+              <option value="">--Please select type--</option>
               <option>Expense</option>
               <option>Income</option>
             </select>
 
-            <label className='mt-3' htmlFor='category'>Category</label>
+            <label className="mt-3" htmlFor='category'>Category</label>
             <select
-              className='form-control mt-2'
-              name='category'
-              id='category'
+              className="form-control mt-2"
+              name="category"
+              id="category"
               onChange={change}
+              required
             >
+              <option value=''>--Please select category--</option>
               <option>Food</option>
               <option>Drinks</option>
             </select>
@@ -65,19 +80,19 @@ const AddEditModal: React.FC<Props> = ({handleClose, show, edit=false}) => {
               value={transaction.amount}
               onChange={change}
             />
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Close
+              </Button>
+              <Button type='submit' variant="primary">
+                Save Changes
+              </Button>
+            </Modal.Footer>
           </form>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
       </Modal>
     </>
   );
-}
+};
 
 export default AddEditModal;
