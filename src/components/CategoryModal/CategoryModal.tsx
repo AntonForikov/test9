@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import {useAppDispatch} from '../../app/hooks';
-import {addNewCategory, getCategoriesList} from '../../store/categoryThunk';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {addNewCategory, getCategoriesList, updateCategory} from '../../store/categoryThunk';
+import {selectCategoryToUpdate} from '../../store/categorySlice';
 
 interface Props {
   id?: string
@@ -17,14 +18,16 @@ const initialCategory = {
 };
 const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
   const dispatch = useAppDispatch();
-  // const trToUpdate = useAppSelector(selectTransactionToUpdate);
+  const categoryToUpdate = useAppSelector(selectCategoryToUpdate);
   const [category, setCategory] = useState(initialCategory);
 
-  // useEffect(() => {
-  //   if (trToUpdate) {
-  //     setTransaction(() => ({...trToUpdate}));
-  //   }
-  // }, [trToUpdate]);
+  useEffect(() => {
+    if (categoryToUpdate) {
+      setCategory(() => ({...categoryToUpdate}));
+    } else {
+      setCategory(initialCategory);
+    }
+  }, [categoryToUpdate]);
 
   const change = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const {name, value} = e.target;
@@ -40,15 +43,15 @@ const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
     await dispatch(addNewCategory(category));
     setCategory(initialCategory);
     dispatch(getCategoriesList());
-    // if (!edit) {
-    //   await dispatch(addNewTransaction(transaction));
-    //   setTransaction(initialCategory);
-    // } else {
-    //   if (id) {
-    //     const withId = {...transaction, id: id};
-    //     await dispatch(updateTransaction(withId));
-    //   }
-    // }
+    if (!edit) {
+      await dispatch(addNewCategory(category));
+      setCategory(initialCategory);
+    } else {
+      if (id) {
+        const withId = {...category, id: id};
+        await dispatch(updateCategory(withId));
+      }
+    }
     handleClose();
   };
 
@@ -65,6 +68,7 @@ const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
               className="form-control mt-2"
               name="type"
               id="type"
+              value={category.type}
               onChange={change}
               required
             >

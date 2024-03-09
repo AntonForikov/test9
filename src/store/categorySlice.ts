@@ -1,12 +1,11 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {addNewTransaction, deleteTransaction, getTransactionById} from './transactionThunk';
-import {CategoryWithId, TransactionToSend} from '../types';
+import {CategoryToSend, CategoryWithId} from '../types';
 import {RootState} from '../app/store';
-import {getCategoriesList} from './categoryThunk';
+import {addNewCategory, deleteCategory, getCategoriesList, getCategoryById} from './categoryThunk';
 
 interface CategoryState {
   categoryList: CategoryWithId[],
-  transactionToUpdate: TransactionToSend | null,
+  categoryToUpdate: CategoryToSend | null,
   categoriesLoading: boolean,
   saveButtonDisabler: boolean,
   deleteButtonDisabler: false | string,
@@ -14,7 +13,7 @@ interface CategoryState {
 
 const initialState: CategoryState = {
   categoryList: [],
-  transactionToUpdate: null,
+  categoryToUpdate: null,
   categoriesLoading: false,
   saveButtonDisabler: false,
   deleteButtonDisabler: false,
@@ -23,7 +22,11 @@ const initialState: CategoryState = {
 const categorySlice = createSlice({
   name: 'category',
   initialState,
-  reducers: {},
+  reducers: {
+    clearCategoryToUpdate: (state) => {
+      state.categoryToUpdate = initialState.categoryToUpdate;
+    }
+  },
   extraReducers: (builder) => {
     builder.addCase(getCategoriesList.pending, (state) => {
       state.categoriesLoading = true;
@@ -35,18 +38,17 @@ const categorySlice = createSlice({
       alert('Please check URL!');
     });
 
-    builder.addCase(getTransactionById.fulfilled, (state, action) => {
-      state.transactionToUpdate = action.payload;
-    }).addCase(getTransactionById.rejected, () => {
-      // state.saveButtonDisabler = false;
+    builder.addCase(getCategoryById.fulfilled, (state, action) => {
+      state.categoryToUpdate = action.payload;
+    }).addCase(getCategoryById.rejected, () => {
       alert('Please check URL!');
     });
 
-    builder.addCase(addNewTransaction.pending, (state) => {
+    builder.addCase(addNewCategory.pending, (state) => {
       state.saveButtonDisabler = true;
-    }).addCase(addNewTransaction.fulfilled, (state) => {
+    }).addCase(addNewCategory.fulfilled, (state) => {
       state.saveButtonDisabler = false;
-    }).addCase(addNewTransaction.rejected, (state) => {
+    }).addCase(addNewCategory.rejected, (state) => {
       state.saveButtonDisabler = false;
       alert('Please check URL!');
     });
@@ -59,19 +61,21 @@ const categorySlice = createSlice({
     //   state.saveButtonDisabler = false;
     // });
     //
-    builder.addCase(deleteTransaction.pending, (state, action) => {
+    builder.addCase(deleteCategory.pending, (state, action) => {
       state.deleteButtonDisabler = action.meta.arg;
-    }).addCase(deleteTransaction.fulfilled, (state) => {
+    }).addCase(deleteCategory.fulfilled, (state) => {
       state.saveButtonDisabler = false;
-    }).addCase(deleteTransaction.rejected, (state) => {
+    }).addCase(deleteCategory.rejected, (state) => {
       state.saveButtonDisabler = false;
     });
   }
 });
 
 export const categoryReducer = categorySlice.reducer;
+
+export const {clearCategoryToUpdate} = categorySlice.actions;
 export const selectCategoriesList = (state: RootState) => state.category.categoryList;
 export const selectCategoriesListLoading = (state: RootState) => state.category.categoriesLoading;
-// export const selectTransactionToUpdate = (state: RootState) => state.transactions.transactionToUpdate;
-// // export const selectSaveButtonDisabler = (state: RootState) => state.dishes.saveButtonDisabler;
-// export const selectDeleteButtonDisabler = (state: RootState) => state.transactions.deleteButtonDisabler;
+export const selectCategoryToUpdate = (state: RootState) => state.category.categoryToUpdate;
+export const selectSaveButtonDisabler = (state: RootState) => state.category.saveButtonDisabler;
+export const selectDeleteButtonDisabler = (state: RootState) => state.category.deleteButtonDisabler;
