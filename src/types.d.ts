@@ -4,14 +4,16 @@ export interface TransactionToSend {
   amount: number,
   date: string
 }
-//
-// export interface DishesFromApi {
-//   [id: string]: DishToSend
-// }
-//
-// export interface DishWithId extends DishToSend {
-//   id: string
-// }
+
+export interface TransactionWithId extends TransactionToSend {
+  id: string
+}
+
+export interface TransactionFromApi {
+  [id: string]: TransactionToSend
+}
+
+
 //
 // export interface CartDish extends Omit<DishWithId, 'image'> {
 //   amount: number

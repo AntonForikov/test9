@@ -71,20 +71,23 @@ const AddEditModal: React.FC<Props> = ({handleClose, show, edit=false}) => {
             </select>
 
             <label className='mt-3' htmlFor='amount'>Amount</label>
-            <input
-              id='amount'
-              type='number'
-              name='amount'
-              min={1}
-              className='form-control mt-2'
-              value={transaction.amount}
-              onChange={change}
-            />
+            <div className='d-flex align-items-center'>
+              <input
+                id="amount"
+                type="number"
+                name="amount"
+                min={1}
+                className="form-control mt-2 me-1"
+                value={transaction.amount}
+                onChange={change}
+              />
+              <strong>KGS</strong>
+            </div>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>
                 Close
               </Button>
-              <Button type='submit' variant="primary">
+              <Button type="submit" variant="primary">
                 Save Changes
               </Button>
             </Modal.Footer>

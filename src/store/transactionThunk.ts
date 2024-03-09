@@ -1,33 +1,29 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {DishesFromApi, DishWithId, DishToSend} from '../types';
 import axiosApi from '../axiosApi';
-import {AppDispatch} from '../app/store';
+import {TransactionFromApi, TransactionToSend, TransactionWithId} from '../types';
 
-export const addNewTransaction = createAsyncThunk<void, DishToSend>(
+export const addNewTransaction = createAsyncThunk<void, TransactionToSend>(
   'transaction/add',
   async (transaction) => {
     await axiosApi.post('/transactions.json', transaction);
   }
 );
 
-// export const getDishesList = createAsyncThunk<DishWithId[], void, {dispatch: AppDispatch}>(
-//   'dish/list',
-//   async (_, thunkAPI) => {
-//     const {data} = await axiosApi.get<DishesFromApi | null>('/dishes.json');
-//
-//     let newDishes: DishWithId[] = [];
-//
-//     if (data) {
-//       newDishes = Object.keys(data).map(id => ({
-//         id: id,
-//         ...data[id],
-//       }));
-//     }
-//
-//     thunkAPI.dispatch(updateDishes(newDishes));
-//     return newDishes;
-//   }
-// );
+export const getTransactionsList = createAsyncThunk<TransactionWithId[]>(
+  'transaction/list',
+  async () => {
+    const {data} = await axiosApi.get<TransactionFromApi | null>('/transactions.json');
+
+    if (data) {
+      return Object.keys(data).map(id => ({
+        id: id,
+        ...data[id],
+      }));
+    }
+
+    return [];
+  }
+);
 //
 // export const getDishById = createAsyncThunk(
 //   'dish/getById',

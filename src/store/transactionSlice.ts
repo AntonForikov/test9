@@ -1,20 +1,22 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 
-import {addNewTransaction} from './transactionThunk';
+import {addNewTransaction, getTransactionsList} from './transactionThunk';
+import {TransactionWithId} from '../types';
+import {RootState} from '../app/store';
 
 interface TransactionState {
-  // dishesList: DishWithId[],
+  transactionsList: TransactionWithId[],
   // dishToUpdate: DishToSend | null,
-  dishesLoading: boolean,
+  transactionsLoading: boolean,
   saveButtonDisabler: boolean,
   deleteButtonDisabler: false | string,
 }
 
 const initialState: TransactionState = {
-  // dishesList: [],
+  transactionsList: [],
   // dishToUpdate: null,
-  dishesLoading: false,
+  transactionsLoading: false,
   saveButtonDisabler: false,
   deleteButtonDisabler: false,
 };
@@ -24,14 +26,15 @@ const transactionSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // builder.addCase(getDishesList.pending, (state) => {
-    //   state.dishesLoading = true;
-    // }).addCase(getDishesList.fulfilled, (state, {payload: dishesList}) => {
-    //   state.dishesLoading = false;
-    //   state.dishesList = dishesList;
-    // }).addCase(getDishesList.rejected, (state) => {
-    //   state.dishesLoading = false;
-    // });
+    builder.addCase(getTransactionsList.pending, (state) => {
+      state.transactionsLoading = true;
+    }).addCase(getTransactionsList.fulfilled, (state, {payload: transactionsList}) => {
+      state.transactionsLoading = false;
+      state.transactionsList = transactionsList;
+    }).addCase(getTransactionsList.rejected, (state) => {
+      state.transactionsLoading = false;
+      alert('Please check URL!');
+    });
 
     // builder.addCase(getDishById.fulfilled, (state, action) => {
     //   state.dishToUpdate = action.payload;
@@ -43,6 +46,7 @@ const transactionSlice = createSlice({
       state.saveButtonDisabler = false;
     }).addCase(addNewTransaction.rejected, (state) => {
       state.saveButtonDisabler = false;
+      alert('Please check URL!');
     });
 
     // builder.addCase(updateDish.pending, (state) => {
@@ -64,8 +68,8 @@ const transactionSlice = createSlice({
 });
 
 export const transactionsReducer = transactionSlice.reducer;
-// export const selectDishesList = (state: RootState) => state.dishes.dishesList;
-// export const selectDishesListLoading = (state: RootState) => state.dishes.dishesLoading;
+export const selectTransactionsList = (state: RootState) => state.transactions.transactionsList;
+export const selectTransactionsListLoading = (state: RootState) => state.transactions.transactionsLoading;
 // export const selectDishToUpdate = (state: RootState) => state.dishes.dishToUpdate;
 // export const selectSaveButtonDisabler = (state: RootState) => state.dishes.saveButtonDisabler;
 // export const selectDeleteButtonDisabler = (state: RootState) => state.dishes.deleteButtonDisabler;
