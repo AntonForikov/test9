@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Modal from '../Modal/Modal';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
-import {deleteTransaction, getTransactionById} from '../../store/transactionThunk';
+import {deleteTransaction, getTransactionById, getTransactionsList} from '../../store/transactionThunk';
 import {clearTransactionToUpdate, selectDeleteButtonDisabler} from '../../store/transactionSlice';
 
 interface Props {
@@ -28,7 +28,10 @@ const TransactionItem: React.FC<Props> = ({ id, date, amount,  category, type })
 
   const onDelete = async () => {
     const confirmation = confirm('Are you sure?');
-    if (confirmation) await dispatch(deleteTransaction(id));
+    if (confirmation) {
+      await dispatch(deleteTransaction(id));
+      dispatch(getTransactionsList());
+    }
   };
   return (
     <div className="d-flex justify-content-between align-items-center border rounded m-3">

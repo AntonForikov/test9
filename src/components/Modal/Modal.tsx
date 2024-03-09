@@ -4,6 +4,7 @@ import Modal from 'react-bootstrap/Modal';
 import {addNewTransaction, getTransactionsList, updateTransaction} from '../../store/transactionThunk';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {selectTransactionToUpdate} from '../../store/transactionSlice';
+import {selectCategoriesList} from '../../store/categorySlice';
 
 interface Props {
   id?: string
@@ -21,6 +22,7 @@ const initialTransaction = {
 const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
   const dispatch = useAppDispatch();
   const trToUpdate = useAppSelector(selectTransactionToUpdate);
+  const categoryList = useAppSelector(selectCategoriesList);
   const [transaction, setTransaction] = useState(initialTransaction);
 
   useEffect(() => {
@@ -62,6 +64,13 @@ const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
     handleClose();
   };
 
+  const filterCategoryByType = () => {
+    if (transaction.type.length) {
+      return categoryList.filter((category) => category.type === transaction.type);
+    }
+    return categoryList;
+  };
+
   return (
     <>
       <Modal show={show} onHide={handleClose} animation={false}>
@@ -93,12 +102,15 @@ const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
               value={transaction.category}
               required
             >
-              <option value=''>--Please select category--</option>
-              <option>Food</option>
-              <option>Drinks</option>
+              <option value="">--Please select category--</option>
+              {
+                filterCategoryByType().map((category) => {
+                  return <option key={category.id} value={category.id}>{category.name}</option>;
+                })
+              }
             </select>
 
-            <label className='mt-3' htmlFor='amount'>Amount</label>
+            <label className="mt-3" htmlFor='amount'>Amount</label>
             <div className='d-flex align-items-center'>
               <input
                 id="amount"

@@ -4,6 +4,7 @@ import {selectTransactionsList, selectTransactionsListLoading} from '../../store
 import {useEffect} from 'react';
 import {getTransactionsList} from '../../store/transactionThunk';
 import Spinner from '../../components/Spinner/Spinner';
+import {getCategoriesList} from '../../store/categoryThunk';
 
 const Home = () => {
   const dispatch = useAppDispatch();
@@ -12,6 +13,7 @@ const Home = () => {
 
   useEffect( () => {
    dispatch(getTransactionsList());
+   dispatch(getCategoriesList());
   }, [dispatch]);
 
   const total = transactionsList.reduce((acc, transaction) => {

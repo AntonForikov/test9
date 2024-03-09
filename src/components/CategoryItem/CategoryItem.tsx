@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import CategoryModal from '../CategoryModal/CategoryModal';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {clearCategoryToUpdate, selectDeleteButtonDisabler} from '../../store/categorySlice';
-import {deleteCategory, getCategoryById} from '../../store/categoryThunk';
+import {deleteCategory, getCategoriesList, getCategoryById} from '../../store/categoryThunk';
 
 
 interface Props {
@@ -28,7 +28,10 @@ const CategoryItem: React.FC<Props> = ({id, category, type}) => {
 
   const onDelete = async () => {
     const confirmation = confirm('Are you sure?');
-    if (confirmation) await dispatch(deleteCategory(id));
+    if (confirmation) {
+      await dispatch(deleteCategory(id));
+      dispatch(getCategoriesList());
+    }
   };
   return (
     <div className='mx-3'>

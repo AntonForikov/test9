@@ -40,9 +40,6 @@ const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
 
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await dispatch(addNewCategory(category));
-    setCategory(initialCategory);
-    dispatch(getCategoriesList());
     if (!edit) {
       await dispatch(addNewCategory(category));
       setCategory(initialCategory);
@@ -52,6 +49,7 @@ const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
         await dispatch(updateCategory(withId));
       }
     }
+    dispatch(getCategoriesList());
     handleClose();
   };
 
