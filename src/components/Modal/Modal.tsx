@@ -1,10 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import {addNewTransaction} from '../../store/transactionThunk';
-import {useAppDispatch} from '../../app/hooks';
+import {addNewTransaction, updateTransaction} from '../../store/transactionThunk';
+import {useAppDispatch, useAppSelector} from '../../app/hooks';
+import {selectTransactionToUpdate} from '../../store/transactionSlice';
 
 interface Props {
+  id?: string
   show: boolean
   handleClose: () => void
   edit?: boolean
@@ -16,24 +18,46 @@ const initialTransaction = {
   amount: 0,
   date: ''
 };
-const AddEditModal: React.FC<Props> = ({handleClose, show, edit=false}) => {
+const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
   const dispatch = useAppDispatch();
+  const trToUpdate = useAppSelector(selectTransactionToUpdate);
   const [transaction, setTransaction] = useState(initialTransaction);
+
+  useEffect(() => {
+    if (trToUpdate) {
+      setTransaction(() => ({...trToUpdate}));
+    }
+  }, [trToUpdate]);
 
   const change = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const {name, value} = e.target;
-    setTransaction((prevState) => ({
-      ...prevState,
-      [name]: value,
-      date: new Date().toISOString()
-    }));
+    if (!edit) {
+      setTransaction((prevState) => ({
+        ...prevState,
+        [name]: value,
+        date: new Date().toISOString()
+      }));
+    } else {
+      setTransaction((prevState) => ({
+        ...prevState,
+        [name]: value,
+      }));
+    }
   };
+
 
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await dispatch(addNewTransaction(transaction));
+    if (!edit) {
+      await dispatch(addNewTransaction(transaction));
+      setTransaction(initialTransaction);
+    } else {
+      if (id) {
+        const withId = {...transaction, id: id};
+        await dispatch(updateTransaction(withId));
+      }
+    }
     handleClose();
-    setTransaction(initialTransaction);
   };
 
   return (

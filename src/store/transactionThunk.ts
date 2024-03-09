@@ -24,34 +24,37 @@ export const getTransactionsList = createAsyncThunk<TransactionWithId[]>(
     return [];
   }
 );
-//
-// export const getDishById = createAsyncThunk(
-//   'dish/getById',
-//   async (dishId: string) => {
-//     const {data} = await axiosApi.get<DishToSend | null>(`/dishes/${dishId}.json`);
-//     if (data) {
-//       return {...data,};
-//     } else {
-//       return null;
-//     }
-//   }
-// );
-//
-// export const updateDish = createAsyncThunk<void, DishWithId>(
-//   'dish/update',
-//   async (dish) => {
-//     const dishToSend: DishToSend = {
-//       title: dish.title,
-//       image: dish.image,
-//       price: dish.price,
-//     };
-//     await axiosApi.put(`/dishes/${dish.id}.json`, dishToSend);
-//   }
-// );
-//
-// export const deleteDish = createAsyncThunk<void, string>(
-//   'dish/delete',
-//   async (id) => {
-//     await axiosApi.delete(`/dishes/${id}.json`);
-//   }
-// );
+
+export const getTransactionById = createAsyncThunk(
+  'transaction/getById',
+  async (transactionId: string) => {
+    const {data} = await axiosApi.get<TransactionToSend | null>(`/transactions/${transactionId}.json`);
+
+    console.log('Request to update');
+    if (data) {
+      return {...data,};
+    } else {
+      return null;
+    }
+  }
+);
+
+export const updateTransaction = createAsyncThunk<void, TransactionWithId>(
+  'transaction/update',
+  async (transaction) => {
+    const TransactionToSend: TransactionToSend = {
+      type: transaction.type,
+      category: transaction.category,
+      amount: transaction.amount,
+      date: transaction.date
+    };
+    await axiosApi.put(`/transactions/${transaction.id}.json`, TransactionToSend);
+  }
+);
+
+export const deleteTransaction = createAsyncThunk<void, string>(
+  'transaction/delete',
+  async (id) => {
+    await axiosApi.delete(`/transactions/${id}.json`);
+  }
+);

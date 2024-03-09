@@ -10,8 +10,8 @@ const Home = () => {
   const transactionsList = useAppSelector(selectTransactionsList);
   const transactionsLoading = useAppSelector(selectTransactionsListLoading);
 
-  useEffect(() => {
-    dispatch(getTransactionsList());
+  useEffect( () => {
+   dispatch(getTransactionsList());
   }, [dispatch]);
 
   const total = transactionsList.reduce((acc, transaction) => {

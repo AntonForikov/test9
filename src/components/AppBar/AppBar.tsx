@@ -6,7 +6,7 @@ const AppBar = () => {
   const [show, setShow] = useState(false);
 
   const handleClose = () => {
-    setShow(!show)
+    setShow(!show);
   };
 
   return (

@@ -1,13 +1,13 @@
 import {createSlice} from '@reduxjs/toolkit';
 
 
-import {addNewTransaction, getTransactionsList} from './transactionThunk';
-import {TransactionWithId} from '../types';
+import {addNewTransaction, deleteTransaction, getTransactionById, getTransactionsList} from './transactionThunk';
+import {TransactionToSend, TransactionWithId} from '../types';
 import {RootState} from '../app/store';
 
 interface TransactionState {
   transactionsList: TransactionWithId[],
-  // dishToUpdate: DishToSend | null,
+  transactionToUpdate: TransactionToSend | null,
   transactionsLoading: boolean,
   saveButtonDisabler: boolean,
   deleteButtonDisabler: false | string,
@@ -15,7 +15,7 @@ interface TransactionState {
 
 const initialState: TransactionState = {
   transactionsList: [],
-  // dishToUpdate: null,
+  transactionToUpdate: null,
   transactionsLoading: false,
   saveButtonDisabler: false,
   deleteButtonDisabler: false,
@@ -36,9 +36,12 @@ const transactionSlice = createSlice({
       alert('Please check URL!');
     });
 
-    // builder.addCase(getDishById.fulfilled, (state, action) => {
-    //   state.dishToUpdate = action.payload;
-    // });
+    builder.addCase(getTransactionById.fulfilled, (state, action) => {
+      state.transactionToUpdate = action.payload;
+    }).addCase(getTransactionById.rejected, () => {
+      // state.saveButtonDisabler = false;
+      alert('Please check URL!');
+    });
 
     builder.addCase(addNewTransaction.pending, (state) => {
       state.saveButtonDisabler = true;
@@ -57,19 +60,19 @@ const transactionSlice = createSlice({
     //   state.saveButtonDisabler = false;
     // });
     //
-    // builder.addCase(deleteDish.pending, (state, action) => {
-    //   state.deleteButtonDisabler = action.meta.arg;
-    // }).addCase(deleteDish.fulfilled, (state) => {
-    //   state.saveButtonDisabler = false;
-    // }).addCase(deleteDish.rejected, (state) => {
-    //   state.saveButtonDisabler = false;
-    // });
+    builder.addCase(deleteTransaction.pending, (state, action) => {
+      state.deleteButtonDisabler = action.meta.arg;
+    }).addCase(deleteTransaction.fulfilled, (state) => {
+      state.saveButtonDisabler = false;
+    }).addCase(deleteTransaction.rejected, (state) => {
+      state.saveButtonDisabler = false;
+    });
   }
 });
 
 export const transactionsReducer = transactionSlice.reducer;
 export const selectTransactionsList = (state: RootState) => state.transactions.transactionsList;
 export const selectTransactionsListLoading = (state: RootState) => state.transactions.transactionsLoading;
-// export const selectDishToUpdate = (state: RootState) => state.dishes.dishToUpdate;
+export const selectTransactionToUpdate = (state: RootState) => state.transactions.transactionToUpdate;
 // export const selectSaveButtonDisabler = (state: RootState) => state.dishes.saveButtonDisabler;
-// export const selectDeleteButtonDisabler = (state: RootState) => state.dishes.deleteButtonDisabler;
+export const selectDeleteButtonDisabler = (state: RootState) => state.transactions.deleteButtonDisabler;
