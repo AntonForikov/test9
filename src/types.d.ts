@@ -13,15 +13,18 @@ export interface TransactionFromApi {
   [id: string]: TransactionToSend
 }
 
+export interface CategoryToSend {
+  name: string,
+  type: string
+}
 
-//
-// export interface CartDish extends Omit<DishWithId, 'image'> {
-//   amount: number
-// }
-//
-// export interface Order {
-//   [id: string]: string;
-// }
+export interface CategoryWithId extends CategoryToSend{
+  id: string
+}
+
+export interface CategoryFromApi {
+  [id: string]: CategoryToSend
+}
 // export interface OrderFromApi {
 //   [id: string]: Order
 // }

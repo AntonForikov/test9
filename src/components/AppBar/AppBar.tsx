@@ -1,11 +1,15 @@
 import {NavLink} from 'react-router-dom';
 import Modal from '../Modal/Modal';
 import {useState} from 'react';
+import {clearTransactionToUpdate} from '../../store/transactionSlice';
+import {useAppDispatch} from '../../app/hooks';
 
 const AppBar = () => {
+  const dispatch = useAppDispatch();
   const [show, setShow] = useState(false);
 
   const handleClose = () => {
+    dispatch(clearTransactionToUpdate());
     setShow(!show);
   };
 
@@ -20,7 +24,7 @@ const AppBar = () => {
             <NavLink to='/categories' className='nav-link'>Categories</NavLink>
           </li>
           <li className="nav-item" style={{cursor: 'pointer'}}>
-            <span className='nav-link' onClick={handleClose}>Add</span>
+            <span className='nav-link' onClick={() => setShow(true)}>Add</span>
           </li>
         </ul>
       </nav>

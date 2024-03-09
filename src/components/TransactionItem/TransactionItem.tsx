@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import Modal from '../Modal/Modal';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {deleteTransaction, getTransactionById} from '../../store/transactionThunk';
-import {selectDeleteButtonDisabler} from '../../store/transactionSlice';
+import {clearTransactionToUpdate, selectDeleteButtonDisabler} from '../../store/transactionSlice';
 
 interface Props {
   id: string
@@ -18,11 +18,12 @@ const TransactionItem: React.FC<Props> = ({ id, date, amount,  category, type })
 
   const handleClose = () => {
     setShow(!show);
+    dispatch(clearTransactionToUpdate());
   };
 
   const edit = async () => {
     await dispatch(getTransactionById(id));
-    handleClose();
+    setShow(true);
   };
 
   const onDelete = async () => {

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import {addNewTransaction, updateTransaction} from '../../store/transactionThunk';
+import {addNewTransaction, getTransactionsList, updateTransaction} from '../../store/transactionThunk';
 import {useAppDispatch, useAppSelector} from '../../app/hooks';
 import {selectTransactionToUpdate} from '../../store/transactionSlice';
 
@@ -26,6 +26,8 @@ const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
   useEffect(() => {
     if (trToUpdate) {
       setTransaction(() => ({...trToUpdate}));
+    } else {
+      setTransaction(initialTransaction);
     }
   }, [trToUpdate]);
 
@@ -50,13 +52,13 @@ const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
     e.preventDefault();
     if (!edit) {
       await dispatch(addNewTransaction(transaction));
-      setTransaction(initialTransaction);
     } else {
       if (id) {
         const withId = {...transaction, id: id};
         await dispatch(updateTransaction(withId));
       }
     }
+    dispatch(getTransactionsList());
     handleClose();
   };
 
@@ -73,6 +75,7 @@ const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
               className="form-control mt-2"
               name="type"
               id="type"
+              value={transaction.type}
               onChange={change}
               required
             >
@@ -87,6 +90,7 @@ const AddEditModal: React.FC<Props> = ({id,handleClose, show, edit=false}) => {
               name="category"
               id="category"
               onChange={change}
+              value={transaction.category}
               required
             >
               <option value=''>--Please select category--</option>
